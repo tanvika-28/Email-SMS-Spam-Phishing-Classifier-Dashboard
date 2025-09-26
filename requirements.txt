@@ -1,3 +1,4 @@
-streamlit
+pip install pandas numpy streamlit
 nltk
+
 sklearn
