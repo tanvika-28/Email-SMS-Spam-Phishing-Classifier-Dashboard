@@ -1,4 +1,9 @@
-pip install pandas numpy streamlit
+streamlit
+pandas
+numpy
+matplotlib
+seaborn
 nltk
-
-sklearn
+scikit-learn
+wordcloud
+email-validator
