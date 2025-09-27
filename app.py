@@ -12,6 +12,26 @@ from wordcloud import WordCloud
 from email import policy
 from email.parser import BytesParser
 
+
+import nltk
+import os
+
+# ----------------- Handle NLTK data dynamically -----------------
+nltk_data_dir = os.path.join(os.getcwd(), "nltk_data")
+os.makedirs(nltk_data_dir, exist_ok=True)
+nltk.data.path.append(nltk_data_dir)
+
+# Check and download punkt
+try:
+    nltk.data.find('tokenizers/punkt')
+except LookupError:
+    nltk.download('punkt', download_dir=nltk_data_dir)
+
+# Check and download stopwords
+try:
+    nltk.data.find('corpora/stopwords')
+except LookupError:
+    nltk.download('stopwords', download_dir=nltk_data_dir)
 # ----------------- Initialize -----------------
 ps = PorterStemmer()
 nltk.download('punkt')
@@ -283,3 +303,4 @@ with tabs[2]:
 
 st.markdown("---")
 st.info("Created by **Tanvika Bhumipal Padole** | ML & Cybersecurity Enthusiast")
+
