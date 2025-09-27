@@ -2,6 +2,7 @@ import streamlit as st
 import pickle
 import string
 import re
+import os
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
@@ -14,8 +15,16 @@ from email.parser import BytesParser
 
 # ----------------- Initialize -----------------
 ps = PorterStemmer()
-nltk.download('punkt')
-nltk.download('stopwords')
+
+# Ensure required NLTK data is available
+nltk_data_dir = os.path.join(os.getcwd(), "nltk_data")
+os.makedirs(nltk_data_dir, exist_ok=True)
+nltk.data.path.append(nltk_data_dir)
+
+# Download all necessary packages
+nltk.download('punkt', download_dir=nltk_data_dir)
+nltk.download('punkt_tab', download_dir=nltk_data_dir)  # NEW FIX
+nltk.download('stopwords', download_dir=nltk_data_dir)
 
 # ----------------- Text Preprocessing -----------------
 def transform_text(text):
@@ -201,7 +210,7 @@ with tabs[1]:
                     st.info("No spam messages to generate WordCloud.")
 
             with col3:
-                st.markdown("** Not Spam WordCloud**")
+                st.markdown("**✅ Not Spam WordCloud**")
                 if ham_text.strip():
                     ham_wc = WordCloud(width=400, height=300, background_color='white', colormap='Greens').generate(ham_text)
                     plt.imshow(ham_wc, interpolation='bilinear')
@@ -242,7 +251,7 @@ with tabs[2]:
 
     # Countplot of Spam vs Not Spam
     fig1, ax1 = plt.subplots(figsize=(6,4))
-    sns.countplot(x="Label", data=df_demo, palette=["green", "red"], ax=ax1)
+    sns.countplot(x="Label", data=df_demo, hue="Label", palette={"Spam": "red", "Not Spam": "green"}, legend=False, ax=ax1)
     ax1.set_title("Spam vs Not Spam Messages", fontsize=14)
     ax1.set_ylabel("Count")
     ax1.set_xlabel("Message Type")
@@ -264,7 +273,7 @@ with tabs[2]:
         plt.clf()
 
     with col2:
-        st.markdown("** Not Spam WordCloud**")
+        st.markdown("**✅ Not Spam WordCloud**")
         ham_wc = WordCloud(width=400, height=300, background_color='white', colormap='Greens').generate(ham_text)
         plt.imshow(ham_wc, interpolation='bilinear')
         plt.axis('off')
@@ -275,7 +284,7 @@ with tabs[2]:
     st.subheader("📊 Message Length Distribution")
     df_demo['num_words'] = df_demo['Message'].apply(lambda x: len(x.split()))
     fig2, ax2 = plt.subplots(figsize=(8,4))
-    sns.histplot(data=df_demo, x='num_words', hue='Label', multiple='stack', palette=['green','red'], bins=10)
+    sns.histplot(data=df_demo, x='num_words', hue='Label', multiple='stack', palette={'Spam': 'red','Not Spam':'green'}, bins=10)
     ax2.set_title("Word Count Distribution by Message Type")
     ax2.set_xlabel("Number of Words")
     ax2.set_ylabel("Count")
